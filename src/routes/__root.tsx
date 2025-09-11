@@ -1,25 +1,28 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanstackDevtools } from '@tanstack/react-devtools'
+import { TanstackDevtools } from "@tanstack/react-devtools";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import Header from '../components/Header'
+import { BottomNav } from "@/components/bottom-nav";
+import { Navbar } from "@/components/navbar";
+import { ThemeProvider } from "@/context/ThemeProvider";
 
 export const Route = createRootRoute({
   component: () => (
-    <>
-      <Header />
+    <ThemeProvider>
+      <Navbar />
       <Outlet />
       <TanstackDevtools
         config={{
-          position: 'bottom-left',
+          position: "bottom-left",
         }}
         plugins={[
           {
-            name: 'Tanstack Router',
+            name: "Tanstack Router",
             render: <TanStackRouterDevtoolsPanel />,
           },
         ]}
       />
-    </>
+      <BottomNav />
+    </ThemeProvider>
   ),
-})
+});
