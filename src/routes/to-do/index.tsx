@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { CreateTodoDialog } from "./components/create-to-do-dialog";
 import { TodoItem } from "./components/to-do-item";
 
-import { addData, getAllData } from "@/utils/indexed-db/to-do";
+import { addData, editDataEntry, getAllData } from "@/utils/indexed-db/to-do";
 import type { Todo } from "@/utils/types";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -57,7 +57,6 @@ function RouterComponent() {
 	const getAllTodos = async () => {
 		const data = (await getAllData()) as Todo[];
 		setTodos(data);
-		console.log("data", data);
 	};
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -125,7 +124,8 @@ function RouterComponent() {
 		);
 	};
 
-	const handleEditTodo = (id: string, updatedTodo: Partial<Todo>) => {
+	const handleEditTodo = async (id: string, updatedTodo: Partial<Todo>) => {
+		await editDataEntry(id, updatedTodo);
 		setTodos((prev) =>
 			prev.map((todo) => (todo.id === id ? { ...todo, ...updatedTodo } : todo)),
 		);
