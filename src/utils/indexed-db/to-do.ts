@@ -47,9 +47,19 @@ export async function addData(data: Todo) {
 	return tx.oncomplete;
 }
 
-export async function getAllData() {
-	const db = await getDB();
-	const tx = db.transaction(STORE_NAME, "readonly");
-	const store = tx.objectStore(STORE_NAME);
-	return store.getAll();
+export function getAllData() {
+	return new Promise((resolve) => {
+		const request = indexedDB.open(DB_NAME);
+
+		request.onsuccess = () => {
+			const db = request.result;
+			const tx = db.transaction(STORE_NAME, "readonly");
+			const store = tx.objectStore(STORE_NAME);
+			const res = store.getAll();
+
+			res.onsuccess = () => {
+				resolve(res.result);
+			};
+		};
+	});
 }

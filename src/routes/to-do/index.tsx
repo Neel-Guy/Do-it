@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { CreateTodoDialog } from "./components/create-to-do-dialog";
 import { TodoItem } from "./components/to-do-item";
 
-import { addData } from "@/utils/indexed-db/to-do";
+import { addData, getAllData } from "@/utils/indexed-db/to-do";
 import type { Todo } from "@/utils/types";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -54,45 +54,15 @@ function RouterComponent() {
 	const [sortBy, setSortBy] = useState<"date" | "category" | "title">("date");
 	const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
-	// Load sample data on component mount
+	const getAllTodos = async () => {
+		const data = (await getAllData()) as Todo[];
+		setTodos(data);
+		console.log("data", data);
+	};
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		const sampleTodos: Todo[] = [
-			{
-				id: "1",
-				title: "Complete project proposal",
-				description:
-					"Finish the Q4 project proposal and send to team for review",
-				category: "Work",
-				notificationFrequency: "1 week",
-				isRecurring: false,
-				isCompleted: false,
-				completedCount: 0,
-				createdAt: new Date("2024-01-15"),
-			},
-			{
-				id: "2",
-				title: "Morning workout",
-				description: "Do 30 minutes of cardio and strength training",
-				category: "Health",
-				notificationFrequency: "Daily",
-				isRecurring: true,
-				isCompleted: false,
-				completedCount: 12,
-				createdAt: new Date("2024-01-10"),
-			},
-			{
-				id: "3",
-				title: "Read React documentation",
-				description: "Study the new React 18 features and concurrent rendering",
-				category: "Learning",
-				notificationFrequency: "3 days",
-				isRecurring: false,
-				isCompleted: true,
-				completedCount: 1,
-				createdAt: new Date("2024-01-12"),
-			},
-		];
-		setTodos(sampleTodos);
+		getAllTodos();
 	}, []);
 
 	const filteredAndSortedTodos = todos
