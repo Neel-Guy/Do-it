@@ -99,3 +99,35 @@ export function editDataEntry(key: string, data: Partial<Todo>) {
 		};
 	});
 }
+
+
+export function deleteDataEntry(key: string) {
+	return new Promise((resolve) => {
+		const request = indexedDB.open(DB_NAME);
+
+		request.onsuccess = () => {
+			const db = request.result;
+			const tx = db.transaction(STORE_NAME, "readwrite");
+			const store = tx.objectStore(STORE_NAME);
+			const res = store.get(key);
+
+			res.onsuccess = (event) => {
+				let entry = (event.target as IDBRequest)?.result;
+
+				if (entry) {
+					const result = store.delete(key);
+
+					result.onsuccess = () => {
+						resolve(true);
+					};
+
+					result.onerror = () => {
+						throw new Error("Error updating entry.");
+					};
+				} else {
+					throw new Error("Entry not found.");
+				}
+			};
+		};
+	});
+}
